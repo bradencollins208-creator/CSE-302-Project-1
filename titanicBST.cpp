@@ -36,6 +36,14 @@ public:
     void PutItem(Passenger newitem);
     void PrintTree();
 
+    int CountPassengers();
+    int CountSurvivors();
+    void PrintSurvivors();
+    void PrintClass(int pclass);
+    int Depth(int pid);
+    int height();
+    double AverageDepth();
+
 private:
     TNode* root;
 
@@ -45,6 +53,9 @@ private:
 
     // Additional helper for the destructor.
     void DestroyTree(TNode* curnode);
+
+    int PassengerCount(TNode*& curnode);
+    int SurvivorCount(TNode*& curnode);
 };
 
 BST::BST()
@@ -120,6 +131,41 @@ void BST::DestroyTree(TNode* curnode)
     }
 }
 
+int BST::CountPassengers()
+{
+    return PassengerCount(root);
+}
+
+int BST::PassengerCount(TNode*& curnode)
+{
+    int count = 0;
+
+    if (curnode != nullptr) {
+        count++;
+        count += PassengerCount(curnode->left);
+        count += PassengerCount(curnode->right);
+    }
+    return count;
+}
+
+int BST::CountSurvivors()
+{
+    return SurvivorCount(root);
+}
+
+int BST::SurvivorCount(TNode*& curnode)
+{
+    int count = 0;
+    if (curnode != nullptr) {
+        count += SurvivorCount(curnode->left);
+        count += SurvivorCount(curnode->right);
+        if (curnode->item.Survived == 1) {
+            count++;
+        }
+    }
+    return count;
+}
+
 int main()
 {
     BST tree;
@@ -168,6 +214,10 @@ int main()
     // Passenger search;
     // search.PassengerId = 1000;
     // cout << tree.GetItem(search) << endl;
+
+    //cout << tree.CountPassengers() << endl;
+
+    cout << tree.CountSurvivors() << endl;
 
     return 0;
 }
