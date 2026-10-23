@@ -41,7 +41,7 @@ public:
     void PrintSurvivors();
     void PrintClass(int pclass);
     int Depth(int pid);
-    int height();
+    int Height();
     double AverageDepth();
 
 private:
@@ -56,6 +56,9 @@ private:
 
     int PassengerCount(TNode*& curnode);
     int SurvivorCount(TNode*& curnode);
+    void ClassPrint(TNode*& curnode, int pclass);
+    int TreeDepth(TNode*& curnode, int pid);
+    int TreeHeight(TNode*& curnode);
 };
 
 BST::BST()
@@ -166,6 +169,116 @@ int BST::SurvivorCount(TNode*& curnode)
     return count;
 }
 
+void BST::PrintClass(int pclass)
+{
+    ClassPrint(root, pclass);
+}
+
+void BST::ClassPrint(TNode*& curnode, int pclass)
+{
+    if (curnode != nullptr) {
+        ClassPrint(curnode->left, pclass);
+        ClassPrint(curnode->right, pclass);
+        if (curnode->item.Class == pclass) {
+            cout << curnode->item.PassengerId << endl;
+        }
+    }
+}
+
+int BST::Depth(int pid)
+{
+    return TreeDepth(root, pid);
+}
+
+int BST::TreeDepth(TNode*& curnode, int pid)
+{
+    int depth = 0;
+
+    if (curnode != nullptr) {
+        if (curnode->item.PassengerId != pid) {
+            if (pid < curnode->item.PassengerId) {
+                depth = TreeDepth(curnode->left, pid);
+            }
+            else {
+                depth = TreeDepth(curnode->right, pid);
+            }
+        }
+        else {
+            return 0;
+        }
+    }
+    else {
+        return -1;
+    }
+    if (depth == -1) {
+        return -1;
+    }
+    return depth + 1;
+}
+
+int BST::Height()
+{
+    return TreeHeight(root);
+}
+
+int BST::TreeHeight(TNode*& curnode)
+{
+    int height = 0;
+    int lHeight;
+    int rHeight;
+    int max;
+
+    if (curnode != nullptr) {
+        lHeight = TreeHeight(curnode->left);
+        rHeight = TreeHeight(curnode->right);
+    }
+    else {
+        return -1;
+    }
+    
+    if (lHeight > rHeight) {
+        max = lHeight;
+    }
+    else if (rHeight > lHeight) {
+        max = rHeight;
+    }
+    else {
+        max = lHeight;
+    }
+    return 1 + max;
+}
+
+// we use this to nicely format a passenger info
+// make use of the iomanip library with setw to set width
+void PrintPassenger(Passenger p) {
+    cout << left
+         << setw(12) << p.PassengerId
+         << setw(10) << p.Survived
+         << setw(8) << p.Class
+         << setw(25) << p.LastName.substr(0, 24)
+         << setw(8) << p.Gender.substr(0, 6)
+         << right
+         << setw(5) << p.Age
+         << setw(12) << fixed << setprecision(2) << p.Fare
+         << endl;
+}
+
+// header with passenger data columns labels
+void PrintPassengerHeader() {
+    cout << left
+        << setw(12) << "PassengerId"
+        << setw(10) << "Survived"
+        << setw(8) << "Class"
+        << setw(25) << "LastName"
+        << setw(8) << "Gender"
+        << right
+        << setw(5) << "Age"
+        << setw(12) << "Fare"
+        << endl;
+    // divider line of dashes
+    cout << string(80, '-') << endl;
+}
+
 int main()
 {
     BST tree;
@@ -209,15 +322,25 @@ int main()
 
     infile.close();
 
-    //tree.PrintTree();
+    // tree.PrintTree();
     
     // Passenger search;
     // search.PassengerId = 1000;
     // cout << tree.GetItem(search) << endl;
 
-    //cout << tree.CountPassengers() << endl;
+    // cout << tree.CountPassengers() << endl;
 
-    cout << tree.CountSurvivors() << endl;
+    // cout << tree.CountSurvivors() << endl;
+
+    // tree.PrintClass(3);
+
+    // cout << tree.Depth(846) << endl;
+    // cout << tree.Depth(280) << endl;
+    // cout << tree.Depth(747) << endl;
+    // cout << tree.Depth(309) << endl;
+    // cout << tree.Depth(41) << endl;
+
+    cout << tree.Height() << endl;
 
     return 0;
 }
