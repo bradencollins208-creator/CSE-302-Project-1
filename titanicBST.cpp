@@ -16,6 +16,37 @@ struct Passenger
     double Fare;
 };
 
+// we use this to nicely format a passenger info
+// make use of the iomanip library with setw to set width
+void PrintPassenger(Passenger p) {
+    cout << left
+         << setw(12) << p.PassengerId
+         << setw(10) << p.Survived
+         << setw(8) << p.Class
+         << setw(25) << p.LastName.substr(0, 24)
+         << setw(8) << p.Gender.substr(0, 6)
+         << right
+         << setw(5) << p.Age
+         << setw(12) << fixed << setprecision(2) << p.Fare
+         << endl;
+}
+
+// header with passenger data columns labels
+void PrintPassengerHeader() {
+    cout << left
+        << setw(12) << "PassengerId"
+        << setw(10) << "Survived"
+        << setw(8) << "Class"
+        << setw(25) << "LastName"
+        << setw(8) << "Gender"
+        << right
+        << setw(5) << "Age"
+        << setw(12) << "Fare"
+        << endl;
+    // divider line of dashes
+    cout << string(80, '-') << endl;
+}
+
 struct TNode
 {
 public:
@@ -56,9 +87,11 @@ private:
 
     int PassengerCount(TNode*& curnode);
     int SurvivorCount(TNode*& curnode);
+    void SurvivorPrint(TNode*& curnode);
     void ClassPrint(TNode*& curnode, int pclass);
     int TreeDepth(TNode*& curnode, int pid);
     int TreeHeight(TNode*& curnode);
+    int TotalDepth(TNode*& curnode, int depth);
 };
 
 BST::BST()
@@ -78,6 +111,7 @@ void BST::PutItem(Passenger newitem)
 
 void BST::PrintTree()
 {
+    PrintPassengerHeader();
     PrintNode(root);
 }
 
@@ -115,7 +149,7 @@ void BST::PrintNode(TNode*& curnode)
 {
     if (curnode != nullptr) {
         PrintNode(curnode->left);
-        cout << curnode->item.PassengerId << ", ";
+        PrintPassenger(curnode->item);
         PrintNode(curnode->right);
     }
 }
@@ -169,6 +203,23 @@ int BST::SurvivorCount(TNode*& curnode)
     return count;
 }
 
+void BST::PrintSurvivors()
+{
+    PrintPassengerHeader();
+    SurvivorPrint(root);
+}
+
+void BST::SurvivorPrint(TNode*& curnode)
+{
+    if (curnode != nullptr) {
+        SurvivorPrint(curnode->left);
+        if (curnode->item.Survived == 1) {
+            PrintPassenger(curnode->item);
+        }
+        SurvivorPrint(curnode->right);
+    }
+}
+
 void BST::PrintClass(int pclass)
 {
     ClassPrint(root, pclass);
@@ -210,9 +261,11 @@ int BST::TreeDepth(TNode*& curnode, int pid)
     else {
         return -1;
     }
+    
     if (depth == -1) {
         return -1;
     }
+    
     return depth + 1;
 }
 
@@ -248,35 +301,19 @@ int BST::TreeHeight(TNode*& curnode)
     return 1 + max;
 }
 
-// we use this to nicely format a passenger info
-// make use of the iomanip library with setw to set width
-void PrintPassenger(Passenger p) {
-    cout << left
-         << setw(12) << p.PassengerId
-         << setw(10) << p.Survived
-         << setw(8) << p.Class
-         << setw(25) << p.LastName.substr(0, 24)
-         << setw(8) << p.Gender.substr(0, 6)
-         << right
-         << setw(5) << p.Age
-         << setw(12) << fixed << setprecision(2) << p.Fare
-         << endl;
+double BST::AverageDepth()
+{
+    return static_cast<double>(TotalDepth(root, 0)) / CountPassengers();
 }
 
-// header with passenger data columns labels
-void PrintPassengerHeader() {
-    cout << left
-        << setw(12) << "PassengerId"
-        << setw(10) << "Survived"
-        << setw(8) << "Class"
-        << setw(25) << "LastName"
-        << setw(8) << "Gender"
-        << right
-        << setw(5) << "Age"
-        << setw(12) << "Fare"
-        << endl;
-    // divider line of dashes
-    cout << string(80, '-') << endl;
+int BST::TotalDepth(TNode*& curnode, int depth)
+{
+    if (curnode != nullptr) {
+        return depth + TotalDepth(curnode->left, depth + 1) + TotalDepth(curnode->right, depth + 1);
+    }
+    else {
+        return 0;
+    }
 }
 
 int main()
@@ -340,7 +377,11 @@ int main()
     // cout << tree.Depth(309) << endl;
     // cout << tree.Depth(41) << endl;
 
-    cout << tree.Height() << endl;
+    // cout << tree.Height() << endl;
+    
+    // cout << tree.AverageDepth() << endl;
+
+    // tree.PrintSurvivors();
 
     return 0;
 }
