@@ -121,7 +121,6 @@ void BST::FindItem(TNode* curnode, Passenger gitem)
     if (curnode == nullptr) 
         cout << "Item not found" << endl;  
     else if (gitem.PassengerId == curnode->item.PassengerId) 
-        //return curnode->item;
         PrintPassenger(curnode->item);
     else if (gitem.PassengerId < curnode->item.PassengerId) 
         FindItem(curnode->left, gitem);
@@ -322,9 +321,6 @@ int main()
 {
     BST PassengerTree;
 
-    // int count = 0; 
-    // const int MAX_PASSENGERS = 1000;
-    // Passenger passengers[MAX_PASSENGERS];
     Passenger passenger;
     string line, field;
 
@@ -337,7 +333,7 @@ int main()
 
     getline(infile, line);
 
-    while (getline(infile, line) /*&& count < MAX_PASSENGERS*/) 
+    while (getline(infile, line)) 
     {
         stringstream ss(line);
 
@@ -355,35 +351,10 @@ int main()
         passenger.Fare = stod(field);
 
         PassengerTree.PutItem(passenger);
-
-        //count++;
     }
 
     infile.close();
 
-    // tree.PrintTree();
-    
-    // Passenger search;
-    // search.PassengerId = 700;
-    // cout << tree.GetItem(search) << endl;
-
-    // cout << tree.CountPassengers() << endl;
-
-    // cout << tree.CountSurvivors() << endl;
-
-    // tree.PrintClass(3);
-
-    // cout << tree.Depth(846) << endl;
-    // cout << tree.Depth(280) << endl;
-    // cout << tree.Depth(747) << endl;
-    // cout << tree.Depth(309) << endl;
-    // cout << tree.Depth(41) << endl;
-
-    // cout << tree.Height() << endl;
-    
-    // cout << tree.AverageDepth() << endl;
-
-    // tree.PrintSurvivors();
 
     cout << "Survivors:" << endl;
     PassengerTree.PrintSurvivors();
@@ -397,11 +368,6 @@ int main()
     // last passenger inserted into the tree, may have a depth close to tree height
     cout << endl << "Passenger 523 Depth: " << PassengerTree.Depth(523) << endl;
     cout << endl << "Average Passenger Depth: " << PassengerTree.AverageDepth() << endl;
-
-    Passenger search;
-    search.PassengerId = 700;
-    PassengerTree.GetItem(search);
-
 
     return 0;
 }
