@@ -63,7 +63,7 @@ public:
     // Added to release dynamically allocated nodes.
     ~BST();
 
-    int GetItem(Passenger gitem);
+    void GetItem(Passenger gitem);
     void PutItem(Passenger newitem);
     void PrintTree();
 
@@ -79,7 +79,7 @@ private:
     TNode* root;
 
     void Insert(TNode*& curnode, Passenger newitem);
-    int FindItem(TNode* curnode, Passenger gitem);
+    void FindItem(TNode* curnode, Passenger gitem);
     void PrintNode(TNode*& curnode);
 
     // Additional helper for the destructor.
@@ -99,9 +99,10 @@ BST::BST()
     root = nullptr;
 }
 
-int BST::GetItem(Passenger gitem)
+void BST::GetItem(Passenger gitem)
 {
-    return FindItem(root, gitem);
+    PrintPassengerHeader();
+    FindItem(root, gitem);
 }
 
 void BST::PutItem(Passenger newitem)
@@ -115,16 +116,17 @@ void BST::PrintTree()
     PrintNode(root);
 }
 
-int BST::FindItem(TNode* curnode, Passenger gitem)
+void BST::FindItem(TNode* curnode, Passenger gitem)
 {
     if (curnode == nullptr) 
-        return -1;  
+        cout << "Item not found" << endl;  
     else if (gitem.PassengerId == curnode->item.PassengerId) 
-        return curnode->item.PassengerId;
+        //return curnode->item;
+        PrintPassenger(curnode->item);
     else if (gitem.PassengerId < curnode->item.PassengerId) 
-        return FindItem(curnode->left, gitem);
+        FindItem(curnode->left, gitem);
     else
-        return FindItem(curnode->right, gitem);
+        FindItem(curnode->right, gitem);
 }
 
 void BST::Insert(TNode*& curnode, Passenger newitem)
@@ -318,7 +320,7 @@ int BST::TotalDepth(TNode*& curnode, int depth)
 
 int main()
 {
-    BST tree;
+    BST PassengerTree;
 
     // int count = 0; 
     // const int MAX_PASSENGERS = 1000;
@@ -352,7 +354,7 @@ int main()
         getline(ss, field, ',');
         passenger.Fare = stod(field);
 
-        tree.PutItem(passenger);
+        PassengerTree.PutItem(passenger);
 
         //count++;
     }
@@ -362,7 +364,7 @@ int main()
     // tree.PrintTree();
     
     // Passenger search;
-    // search.PassengerId = 1000;
+    // search.PassengerId = 700;
     // cout << tree.GetItem(search) << endl;
 
     // cout << tree.CountPassengers() << endl;
@@ -382,6 +384,24 @@ int main()
     // cout << tree.AverageDepth() << endl;
 
     // tree.PrintSurvivors();
+
+    cout << "Survivors:" << endl;
+    PassengerTree.PrintSurvivors();
+    cout << "First Class Passengers:" << endl;
+    PassengerTree.PrintClass(1);
+    cout << endl << "Passenger Count: " << PassengerTree.CountPassengers() << endl;
+    cout << endl << "Survivor Count: " << PassengerTree.CountSurvivors() << endl;
+    cout << endl << "Tree Height: " << PassengerTree.Height() << endl;
+    // first passenger inserted into the tree, should have depth 0
+    cout << endl << "Passenger 846 Depth: " << PassengerTree.Depth(846) << endl;    
+    // last passenger inserted into the tree, may have a depth close to tree height
+    cout << endl << "Passenger 523 Depth: " << PassengerTree.Depth(523) << endl;
+    cout << endl << "Average Passenger Depth: " << PassengerTree.AverageDepth() << endl;
+
+    Passenger search;
+    search.PassengerId = 700;
+    PassengerTree.GetItem(search);
+
 
     return 0;
 }
